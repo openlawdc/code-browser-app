@@ -9,7 +9,7 @@ d3.json('index.json', function(err, index) {
         .enter()
         .append('li')
         .attr('class', 'title')
-        .on('touchstart', clickTitle)
+        .on('click', clickTitle)
         .append('div')
         .attr('class', 'clearfix');
 
@@ -21,16 +21,35 @@ d3.json('index.json', function(err, index) {
         .attr('class', 'name')
         .text(function(d) { return d[1]; });
 
+
+    function switchPanes(from, to) {
+        var w = window.innerWidth;
+        d3.select(to)
+            .style('display', 'block')
+            .style('left', w + 'px');
+
+        d3.select(from)
+            .style('left', 0)
+            .transition()
+            .duration(500)
+            .style('left', -w + 'px')
+            .each('end', function() {
+                d3.select(this).style('display', 'none');
+            });
+
+        d3.select(to).transition()
+            .duration(500)
+            .style('left', '0px');
+    }
+
     function clickTitle(d) {
-        var t = this;
-        titles.classed('active', function(d) { return this == t; });
         sectionsFor(d);
+        switchPanes('#titles-pane', '#sections-pane');
     }
 
     function doSection(d) {
-        d3.select('#section').classed('loading', true);
         d3.json('sections/' + d[0] + '.json', function(err, section) {
-            d3.select('#section').classed('loading', false);
+            switchPanes('#sections-pane', '#content-pane');
             var s = d3.select('#section');
 
             var content = s.selectAll('div.content')
@@ -124,8 +143,6 @@ d3.json('index.json', function(err, index) {
     function sectionsFor(title) {
 
         function clickSection(d) {
-            var t = this;
-            sections.classed('active', function(d) { return this == t; });
             doSection(d);
         }
 
@@ -145,7 +162,7 @@ d3.json('index.json', function(err, index) {
             .append('li')
             .attr('class', 'section')
             .classed('repealed', doesNotApply)
-            .on('touchstart', clickSection);
+            .on('click', clickSection);
 
         li.append('span')
             .attr('class', 'section-number')
