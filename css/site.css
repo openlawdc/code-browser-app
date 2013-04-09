@@ -77,11 +77,6 @@ ul.items li.active {
     margin-right:5px;
 }
 
-.content {
-    height:100%;
-    overflow:auto;
-}
-
 .content h1 {
     border-bottom:1px solid #ccc;
     margin-bottom:0;
