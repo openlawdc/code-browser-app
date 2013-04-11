@@ -5,53 +5,135 @@ d3.json('index.json', function(err, index) {
         .selectAll('li.title')
         .data(index.titles);
 
-    var li = titles
+    var titles_li = titles
         .enter()
         .append('li')
         .attr('class', 'title')
-        .on('click', clickTitle)
-        .append('div')
+        .on('click.in', clickTitle);
+
+    var titles_div = titles_li.append('div')
         .attr('class', 'clearfix');
 
-    li.append('span')
+    titles_div.append('span')
         .attr('class', 'number')
         .text(function(d) { return d[0]; });
 
-    li.append('span')
+    titles_div.append('span')
         .attr('class', 'name')
         .text(function(d) { return d[1]; });
 
+    function clickTitle(d) {
+        var t = this;
 
-    function switchPanes(from, to) {
-        var w = window.innerWidth;
-        d3.select(to)
-            .style('display', 'block')
-            .style('left', w + 'px');
+        document.body.scrollTop = 0;
 
-        d3.select(from)
-            .style('left', 0)
-            .transition()
-            .duration(500)
-            .style('left', -w + 'px')
-            .each('end', function() {
-                d3.select(this).style('display', 'none');
+        titles_li
+            .filter(function(f) { return d == f; })
+            .classed('active', true)
+            .on('click.in', null)
+            .on('click.out', function(d) {
+                clearSections();
+                clearSection();
+                titles_li
+                    .classed('active', false)
+                    .style('display', 'block')
+                    .style('height', 'auto')
+                    .on('click.out', null)
+                    .on('click.in', clickTitle);
             });
 
-        d3.select(to).transition()
-            .duration(500)
-            .style('left', '0px');
+        titles_li.transition()
+            .filter(function(f) { return d != f; })
+            .duration(200)
+            .style('height', '0px')
+            .each('end', function(_, i) {
+                if (i === 0) sectionsFor(d);
+                d3.select(this).style('display', 'none');
+            });
     }
 
-    function clickTitle(d) {
-        sectionsFor(d);
-        switchPanes('#titles-pane', '#sections-pane');
+    function clearSections() {
+        d3.select('#sections')
+            .selectAll('li.section')
+            .data([])
+            .exit()
+            .remove();
+    }
+
+    function sectionsFor(title) {
+
+        function clickSection(d) {
+            var t = this;
+
+            sections_li
+                .filter(function(f) { return d == f; })
+                .classed('active', true)
+                .on('click.in', null)
+                .on('click.off', function() {
+                    clearSection();
+                    sections_li
+                        .classed('active', false)
+                        .style('display', 'block')
+                        .style('height', 'auto')
+                        .on('click.out', null)
+                        .on('click.in', clickSection);
+                });
+
+            sections_li.transition()
+                .filter(function(f) { return d != f; })
+                .duration(200)
+                .style('height', '0px')
+                .each('end', function(_, i) {
+                    if (i === 0) doSection(d);
+                    d3.select(this).style('display', 'none');
+                });
+        }
+
+        var thisTitle = index.sections.filter(function(s) {
+            return s[0].match(/(\d+)\-/)[1] == title[0];
+        });
+
+        // build section list
+        var sections = d3.select('#sections')
+            .selectAll('li.section')
+            .data(thisTitle, function(d) { return d[0]; });
+
+        sections.exit().remove();
+
+        var sections_li = sections
+            .enter()
+            .append('li')
+            .attr('class', 'section')
+            .classed('repealed', doesNotApply)
+            .style('opacity', 0)
+            .on('click.in', clickSection);
+
+        var div = sections_li.append('div');
+
+        div.append('span')
+            .attr('class', 'section-number')
+            .text(function(d) { return d[0]; });
+
+        div.append('span')
+            .attr('class', 'section-name')
+            .text(function(d) { return d[1]; });
+
+        sections_li
+            .transition()
+            .style('opacity', 1);
+    }
+
+    function clearSection(d) {
+        var s = d3.select('#section');
+        var content = s.selectAll('div.content')
+            .data([], function(d) { return JSON.stringify(d); })
+            .exit()
+            .remove();
     }
 
     function doSection(d) {
         d3.json('sections/' + d[0] + '.json', function(err, section) {
-            switchPanes('#sections-pane', '#content-pane');
             var s = d3.select('#section');
-
             var content = s.selectAll('div.content')
                 .data([section], function(d) { return JSON.stringify(d); });
 
@@ -76,9 +158,7 @@ d3.json('index.json', function(err, index) {
                     })
                     .enter()
                     .append('p')
-                    .text(function(d) {
-                        return d;
-                    });
+                    .text(String);
             }
 
             var sections = div.append('div')
@@ -140,39 +220,4 @@ d3.json('index.json', function(err, index) {
         return d[1].match(/\[(Repealed|Omitted|Expired)\]/g);
     }
 
-    function sectionsFor(title) {
-
-        function clickSection(d) {
-            doSection(d);
-        }
-
-        // build section list
-        var sections = d3.select('#sections')
-            .selectAll('li.section')
-            .data(index.sections.filter(function(s) {
-                return s[0].match(/(\d+)\-/)[1] == title[0];
-            }), function(d) {
-                return d[0];
-            });
-
-        sections.exit().remove();
-
-        var li = sections
-            .enter()
-            .append('li')
-            .attr('class', 'section')
-            .classed('repealed', doesNotApply)
-            .on('click', clickSection);
-
-        li.append('span')
-            .attr('class', 'section-number')
-            .text(function(d) { return d[0]; });
-
-        li.append('span')
-            .attr('class', 'section-name')
-            .text(function(d) { return d[1]; });
-
-        d3.select('.sections-container')
-            .property('scrollTop', 0);
-    }
 });

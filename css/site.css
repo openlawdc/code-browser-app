@@ -16,51 +16,49 @@ html, body {
   -webkit-user-select: none;
 }
 
-.code-browser a {
-    color:blue;
-}
-
-.head-nav {
-    background:#eee;
-}
-
 .pane {
-    position:absolute;
     width:100%;
 }
 
-#sections-pane { display:none; }
-#content-pane { display:none; }
-
-h3.head-title {
-    text-transform:uppercase;
-    font-size:16px;
-    color:#222;
-    margin:0;
-    text-align:center;
-    text-shadow: 0 0 3px #fff;
-}
-
 ul.items li {
-    border-top:1px solid #eee;
-    transition:background 50ms linear;
-    padding:5px 10px;
+    overflow:hidden;
 }
 
-ul.items#titles li {
-    padding:5px 10px 0 10px;
+ul li div {
+    width:100%;
+    border-top:1px solid #eee;
+    padding: 5px 2px 0px 5px;
+}
+
+ul#sections li div {
+    padding: 5px 2px 5px 5px;
+}
+
+ul.items li.title.active {
+    background:#444;
+    text-shadow:0 0 2px #000;
+    color:#eee;
+}
+
+ul.items li.section.active {
+    text-shadow:0 0 2px #000;
+    background:#666;
+    color:#eee;
+}
+
+ul.items li.active span {
+    color:#eee;
+}
+
+ul.items li.active div {
+    border-top:none;
 }
 
 ul.items li.repealed {
     color:#888;
 }
 
-ul.items li.active {
-    background-color:#eec;
-}
-
 .number {
-    color:#777;
     width:20px;
     text-align:right;
     display:block;
@@ -75,6 +73,7 @@ ul.items li.active {
 .section-number {
     color:#777;
     margin-right:5px;
+    margin-left:5px;
 }
 
 .content h1 {
