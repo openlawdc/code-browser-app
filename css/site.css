@@ -80,6 +80,8 @@ ul.items li.repealed {
 .content h1 {
     border-bottom:1px solid #ccc;
     margin-bottom:0;
+    font-size:24px;
+    line-height:28px;
 }
 
 #section.loading {

@@ -25,7 +25,6 @@ d3.json('index.json', function(err, index) {
     function clickTitle(d) {
         var t = this;
 
-        document.body.scrollTop = 0;
 
         titles_li
             .filter(function(f) { return d == f; })
@@ -45,7 +44,10 @@ d3.json('index.json', function(err, index) {
         titles_li
             .filter(function(f) { return d != f; })
             .style('display', 'none');
+
         sectionsFor(d);
+
+        document.body.scrollTop = 0;
     }
 
     function clearSections() {
