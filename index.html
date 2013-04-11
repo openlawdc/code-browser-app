@@ -8,6 +8,7 @@
         <meta http-equiv='content-type' content='text/html; charset=utf-8' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
         <meta name='apple-mobile-web-app-status-bar-style' content='black' />
+        <script src='js/lib/fastclick.js'></script>
     </head>
     <body class='code-browser'>
         <div class='head-nav'>
@@ -26,7 +27,10 @@
             </div>
         </div>
 
-        <script src='js/d3.v3.min.js'></script>
+        <script>
+        new FastClick(document.body);
+        </script>
+        <script src='js/lib/d3.v3.min.js'></script>
         <script src='js/browser.js'></script>
     </body>
 </html>
