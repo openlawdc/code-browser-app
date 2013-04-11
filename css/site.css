@@ -22,6 +22,7 @@ html, body {
 
 ul.items li {
     overflow:hidden;
+    width:100%;
 }
 
 ul li div {

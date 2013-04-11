@@ -42,14 +42,10 @@ d3.json('index.json', function(err, index) {
                     .on('click.in', clickTitle);
             });
 
-        titles_li.transition()
+        titles_li
             .filter(function(f) { return d != f; })
-            .duration(200)
-            .style('height', '0px')
-            .each('end', function(_, i) {
-                if (i === 0) sectionsFor(d);
-                d3.select(this).style('display', 'none');
-            });
+            .style('display', 'none');
+        sectionsFor(d);
     }
 
     function clearSections() {
@@ -79,14 +75,10 @@ d3.json('index.json', function(err, index) {
                         .on('click.in', clickSection);
                 });
 
-            sections_li.transition()
+            sections_li
                 .filter(function(f) { return d != f; })
-                .duration(200)
-                .style('height', '0px')
-                .each('end', function(_, i) {
-                    if (i === 0) doSection(d);
-                    d3.select(this).style('display', 'none');
-                });
+                .style('display', 'none');
+            doSection(d);
         }
 
         var thisTitle = index.sections.filter(function(s) {
@@ -118,9 +110,7 @@ d3.json('index.json', function(err, index) {
             .attr('class', 'section-name')
             .text(function(d) { return d[1]; });
 
-        sections_li
-            .transition()
-            .style('opacity', 1);
+        sections_li.style('opacity', 1);
     }
 
     function clearSection(d) {
